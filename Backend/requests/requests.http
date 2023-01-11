@@ -1,0 +1,65 @@
+@users = http://localhost:3000/users
+@places = http://localhost:3000/places
+@permissions = http://localhost:3000/permissions
+
+############ Obtener todos los usuarios
+GET {{users}}
+
+############ Obtener un solo usuario
+GET {{users}}/72661313
+
+############ Actualizar un usuario
+PUT {{users}}/72661313
+Content-Type: application/json
+
+{
+    "Contraseña": "muydificil"
+}
+
+############ Crear nuevo usuario
+POST {{users}}
+Content-Type: application/json
+
+{
+    "dni": 70661253,
+    "nombres": "Carlos Marcelo",
+    "apellidos": "Querevalú Vásquez",
+    "contra": 70661253
+}
+
+#==================================
+
+############ Obtener todos los lugares
+GET {{places}}
+
+############ Obtener un solo espacio
+GET {{places}}/00001A
+
+############ Crear nuevo espacio
+POST {{places}}
+Content-Type: application/json
+
+{
+    "codigo": "00002A",
+    "nombre": "Puerta Dormitorio"
+}
+
+#==================================
+
+############ Obtener todos los lugares
+GET {{permissions}}
+
+############ Crear nuevo espacio
+POST {{permissions}}
+Content-Type: application/json
+
+{
+    "espacio": "00002A",
+    "usuario": 72661313
+}
+
+############ Obtener los lugares donde tiene permiso el usuario
+GET {{permissions}}/72661313
+
+############ Cantidad total de espacios de un usuario
+GET {{permissions}}/count/70661253
