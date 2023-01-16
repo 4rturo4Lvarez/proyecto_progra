@@ -1,4 +1,6 @@
 import app from './app'
 
-app.listen(3000)
-console.log("Ejecutandose en el puerto 3000")
+import { PUERTO } from './config'
+
+app.listen(PUERTO)
+console.log("Ejecutandose en el puerto", PUERTO)
