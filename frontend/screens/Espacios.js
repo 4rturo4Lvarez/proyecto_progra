@@ -1,31 +1,23 @@
-import { View, Text } from 'react-native'
+import { Text } from 'react-native';
 
-import React, { useState, useEffect } from 'react'
-import Layout from '../components/Layout'
-import { useGlobalState } from '../components/user'
+import React, { useState, useEffect } from 'react';
+import Layout from '../components/Layout';
+
+import {getPermissions} from '../api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Espacios = () => {
 
-    const dni = useGlobalState('userLogin');
+    const [permissions, setPermissions] = useState([]);
 
-    const [URL, setURL] = useState('');
+    const loadPermissions = async() => {
+        const DNI = await AsyncStorage.getItem('userToken')
 
-    const handleURL = async() => {
-        console.log(dni);
-        const newURL = 'http://192.168.3.11:3000/permissions/' + dni[0]
-        setURL(newURL);
-        console.log(URL);
-    }
-
-    const loadPermission = async () => {
-        const res = await fetch(URL)
-        const data = await res.json()
-        console.log(data);
+        const data = await getPermissions(DNI)
     }
 
     useEffect(() => {
-        handleURL(),
-        loadPermission();
+      loadPermissions()
     }, [])
 
     return (

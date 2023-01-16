@@ -1,16 +1,35 @@
 import {
     View,
     Text,
-    FlatList,
     StyleSheet,
     TouchableOpacity,
-    TextInput
+    TextInput,
+    Alert
 } from 'react-native';
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
+
+import * as Animatable from 'react-native-animatable';
+import Feather from 'react-native-vector-icons/Feather'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 import { AuthContext } from '../components/context';
 
+import { getUsers } from "../api";
+
 const InicioSesion = () => {
+    
+    const [User, setUsers] = useState({})
+
+    const loadUsers = async () => {     //HACEMOS LA PETICION DE LOS USUARIOS
+        const Users = await getUsers()
+        setUsers(Users)
+        //console.log(Users)
+    }
+
+    useEffect(() => {
+        loadUsers()
+    }, []);
 
     const {signIn} = React.useContext(AuthContext);
 
@@ -18,11 +37,13 @@ const InicioSesion = () => {
         username: '',
         password: '',
         check_textInputChange: false,
-        secureTextEntry: true
+        secureTextEntry: true,
+        isValidUser: true,
+        isValidPassword: true,
     })
 
     const textInputChange = (val) => {
-        if (val.length !== 0) {
+        if (val.length == 8) {
             setData({
                 ...data,
                 username: val,
@@ -39,11 +60,34 @@ const InicioSesion = () => {
         }
     }
 
+    const handleValidUser = (val) => {
+        if( val.trim().length == 8 ) {
+            setData({
+                ...data,
+                isValidUser: true
+            });
+        } else {
+            setData({
+                ...data,
+                isValidUser: false
+            });
+        }
+    }
+
     const handlePasswordChange = (val) => {
-        setData({
-            ...data,
-            password: val
-        });
+        if( val.trim().length !== 0 ) {
+            setData({
+                ...data,
+                password: val,
+                isValidPassword: true
+            });
+        } else {
+            setData({
+                ...data,
+                password: val,
+                isValidPassword: false
+            });
+        }
     }
 
     const updateSecureTextEntry = () => {
@@ -53,28 +97,91 @@ const InicioSesion = () => {
         });
     }
 
-    const loginHandle = (usename, password) => {
-        signIn(usename, password);
+    const loginHandle = (userName, password) => {
+
+        const foundUser = User.filter( item => {
+            return userName == item.DNI && password == item.Contraseña;
+        } );
+
+        if (data.password.length == 0 ) {
+            Alert.alert('Error de Inicio de Sesión', 'Ingrese su contraseña.', [
+                {text: 'Ok'}
+            ]);
+            return;
+        }
+
+        if ( foundUser.length == 0 ) {
+            Alert.alert('Error de Inicio de Sesión', 'Dni o contraseña incorrectos.', [
+                {text: 'Ok'}
+            ]);
+            return;
+        }
+        signIn(foundUser);
     }
 
     return (
         <View style={styles.logScreen}>
+
             <Text style = {styles.textScreen}>
                 CERRADURA AUTOMÁTICA
             </Text>
-            <TextInput
-                keyboardType='number-pad'
-                placeholder= 'DNI'
-                style = {styles.textInput}
-                onChangeText = {(val) => textInputChange(val)}
-            />
-            <TextInput
-                placeholder = 'Contraseña'
-                secureTextEntry={data.secureTextEntry ? true : false}
-                style = {styles.textInput}
-                autoCapitalize='none'
-                onChangeText = {(val) => handlePasswordChange(val)}
-            />
+
+            <View style={styles.action}>
+                <FontAwesome style = {{alignSelf: 'center'}}
+                    name="user-o"
+                    color="#041C32"
+                    size={20}
+                />
+                <TextInput
+                    placeholder= 'DNI'
+                    style = {styles.textInput}
+                    onChangeText = {(val) => textInputChange(val)}
+                    onEndEditing={(x)=>handleValidUser(x.nativeEvent.text)}
+                />
+                {data.check_textInputChange ?
+                        <Animatable.View style = {{alignSelf: 'center', marginRight: 10}}
+                            animation="bounceIn"
+                        >
+                            <Feather
+                                name="check-circle"
+                                color="#041C32"
+                                size={25}
+                            />
+                        </Animatable.View>
+                        : null}
+            </View>
+
+            <View style={styles.action}>
+                <Feather style = {{alignSelf: 'center'}}
+                    name="lock"
+                    color="#041C32"
+                    size={20}
+                />
+                <TextInput
+                    placeholder = 'Contraseña'
+                    secureTextEntry={data.secureTextEntry ? true : false}
+                    style = {styles.textInput}
+                    autoCapitalize='none'
+                    onChangeText = {(val) => handlePasswordChange(val)}
+                />
+                <TouchableOpacity style = {{alignSelf: 'center', marginRight: 9}}
+                    onPress={updateSecureTextEntry}
+                >
+                    {data.secureTextEntry ? 
+                    <Feather 
+                        name="eye-off"
+                        color="#041C32"
+                        size={25}
+                    />
+                    :
+                    <Feather 
+                        name="eye"
+                        color="#041C32"
+                        size={25}
+                    />
+                    }
+                </TouchableOpacity>
+            </View>
 
             <TouchableOpacity
                 onPress={() => {loginHandle( data.username, data.password)}}
@@ -83,6 +190,7 @@ const InicioSesion = () => {
             >
                 <Text style={styles.textButton}>INICIAR SESIÓN</Text>
             </TouchableOpacity>
+
         </View>
     )
 }
@@ -101,13 +209,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     textInput: {
-        borderWidth: 0.5,
-        padding: 15,
-        fontSize: 16,
-        marginTop: 25,
-        borderRadius: 15,
-        backgroundColor: '#ECB365'
-
+        flex: 1,
+        padding: 10,
+        fontSize: 17
     },
     loginButton: {
         borderWidth: 1,
@@ -121,7 +225,14 @@ const styles = StyleSheet.create({
         color: '#ECB365',
         fontSize: 15,
         textAlign: 'center',
-    }
+    },
+    action: {
+        flexDirection: 'row',
+        marginTop: 35,
+        backgroundColor: '#ECB365',
+        borderRadius: 10,
+        padding: 10
+    },
 })
 
 export default InicioSesion

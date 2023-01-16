@@ -6,42 +6,16 @@ import InicioSesion from "./screens/InicioSesion";
 import PantallaPrincipal from "./screens/PantallaPrincipal";
 import Configuracion from "./screens/Configuracion";
 import Espacios from "./screens/Espacios";
-import { Text, TouchableOpacity, View, Image } from "react-native";
+import { View } from "react-native";
 import { ActivityIndicator } from "@react-native-material/core";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { AuthContext } from "./components/context";
 
-import { getUsers } from "./api";
-
-import engranaje from './assets/engranaje.png'
-
 const Stack = createStackNavigator()
 
-const handleUser = async(dni) => {
-  try {
-    await AsyncStorage.setItem('userLogin', dni);
-  }
-
-  catch(e){
-    console.log(e);
-  }
-}
-
 const App = () => {
-
-  const [data, setData] = React.useState({})
-
-  const loadUsers = async () => {     //HACEMOS LA PETICION DE LOS USUARIOS
-    const Users = await getUsers()
-    setData(Users)
-    console.log('Peticion realizada')
-  }
-  
-  useEffect(() => {
-      loadUsers()
-  }, [])
 
   const initialLoginState = {
     isLoading: true,
@@ -79,32 +53,23 @@ const App = () => {
   const [loginState, dispatch] = React.useReducer(loginReducer, initialLoginState);
 
   const authContext = React.useMemo(() => ({
-    signIn: async(username, password) => {
+    signIn: async(foundUser) => {
 
-      let userToken;
-      userToken = null;
+      const userName = foundUser[0].username;
+      const userToken = String(foundUser[0].DNI);
+      
+      try {
 
-      let length = data.length
-      console.log(length)
+        await AsyncStorage.setItem('userToken', userToken);
 
-      for (let i = 0; i < length; i++){
-
-        if (username == data[i].DNI && password == data[i].Contraseña) {
-
-          try {
-            handleUser(username);
-            userToken = "tokenDeUsuario"
-            await AsyncStorage.setItem('userToken', userToken);
-          }
-
-          catch(e){
-            console.log(e);
-          }
-        }
-        else {continue;}
       }
+      catch(e) {
 
-      dispatch({ type: 'LOGIN', id: username, token: userToken });
+        console.log(e);
+
+      }
+      //console.log('user token: ', userToken);
+      dispatch({ type: 'LOGIN', id: userName, token: userToken });
     },
 
     signOut: async() => {
@@ -162,34 +127,7 @@ const App = () => {
             <Stack.Screen 
               name = "CERRADURA"
               component={PantallaPrincipal}
-              options={({ navigation }) => ({
-                headerTitleAlign: "center",
-                headerStyle: { backgroundColor: '#041C32'},
-                headerTitleStyle: { color: '#ECB365'},
-
-                headerRight: () => (
-                  <TouchableOpacity
-                    onPress = {() => navigation.navigate('Configuración')}
-                  >
-                    <Image
-                      style={{width: 32, height: 32, marginRight: 20}}
-                      source = {engranaje}
-                    />
-                  </TouchableOpacity>
-                ),
-
-                // headerLeft: () => (
-                //   <TouchableOpacity
-                //     onPress = {() => navigation.navigate('Espacios del Usuario')}
-                //   >
-                //     <Image
-                //       style={{width: 32, height: 32, marginLeft: 20}}
-                //       source = {engranaje}
-                //     />
-                //   </TouchableOpacity>
-                // ),
-
-              })}
+              options={{headerShown: false}}
             />
 
             <Stack.Screen
@@ -197,8 +135,8 @@ const App = () => {
               component={Configuracion}
 
               options={{
-                headerStyle: { backgroundColor: '#041C32'},
-                headerTitleStyle: { color: '#ECB365'},
+                headerStyle: { backgroundColor: '#ECB365'},
+                headerTitleStyle: { color: '#041C32'},
                 headerTitleAlign: 'center'
               }}
             />
@@ -208,8 +146,9 @@ const App = () => {
               component={Espacios}
               
               options={{
-                headerStyle: { backgroundColor: '#041C32'},
-                headerTitleStyle: { color: '#ECB365'},
+                headerStyle: { backgroundColor: '#ECB365'},
+                headerTitleStyle: { color: '#041C32'},
+                headerTitleAlign: 'center'
               }}
             />
 

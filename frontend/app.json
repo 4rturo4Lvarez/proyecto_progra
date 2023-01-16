@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "frontend",
+    "name": "App - Cerradura Eléctrica",
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#064663"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

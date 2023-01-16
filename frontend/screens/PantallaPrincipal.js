@@ -1,19 +1,16 @@
-import { TouchableOpacity, StyleSheet, Image } from 'react-native'
+import { TouchableOpacity, StyleSheet, Image, View } from 'react-native'
 import React, { useState, useEffect } from 'react'
 
 import openDoor from '../assets/candado-abierto.png'
 import closeDoor from '../assets/candado-cerrado.png'
-import Layout from '../components/Layout'
+import engranaje from '../assets/engranaje.png'
+import info from '../assets/info.png'
 
-import { getData } from '../components/user'
+import Layout from '../components/Layout'
 
 import { abrirPuerta } from '../api'
 
-const PantallaPrincipal = () => {
-
-    useEffect(() => {
-        getData()
-    }, [])
+const PantallaPrincipal = ({ navigation }) => {
 
     const [statusButton, setStatus] = useState(false);  //Crea la constante que almacenara el valor del estado del boton
 
@@ -29,6 +26,37 @@ const PantallaPrincipal = () => {
 
     return (
         <Layout>
+            <View
+                style={{
+                    flexDirection: 'row-reverse',
+                    marginTop: 40,
+                    alignSelf: 'center'
+                  }}
+            >
+                <TouchableOpacity
+                    onPress= { () => {
+                        navigation.navigate('Configuración')
+                    }}
+                    style={{paddingLeft: '70%'}}
+                >
+                    <Image
+                        style={styles.optionsButton}
+                        source={engranaje}
+                    />
+                
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress = {() => {
+                        navigation.navigate('Espacios del Usuario')
+                    }}
+                >
+                <Image
+                    style={styles.placesButton}
+                    source = {info}
+                />
+                </TouchableOpacity>
+            </View>
             <TouchableOpacity
                 style={{marginTop: '30%'}}
                 onPressIn={updateImage}     //Al presionarse cambia el estado a true y se muestra la imagen openDoor
@@ -64,6 +92,18 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#ECB365',
         resizeMode: 'contain'
+    },
+
+    optionsButton: {
+        width: 40,
+        height: 40,
+        resizeMode: 'contain',
+    },
+
+    placesButton: {
+        width: 40,
+        height: 40,
+        resizeMode: 'contain',
     }
 })
 

@@ -13,13 +13,24 @@ const Configuracion = () => {
             <TouchableOpacity style={styles.button}
                 //onPress={}
             >
-                <Text style={styles.textButton}>Cambiar Contraseña</Text>
+                <Text 
+                    style={styles.textButton}
+                >
+                    Cambiar Contraseña
+                </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}
+
+            <TouchableOpacity
+                style={styles.button}
                 onPress={() => {signOut()}}
             >
-                <Text style={styles.textButton}>Cerrar Sesión</Text>
+                <Text
+                    style={styles.textButton}
+                >
+                    Cerrar Sesión
+                </Text>
             </TouchableOpacity>
+
         </Layout>
     )
 }
@@ -27,11 +38,14 @@ const Configuracion = () => {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: '#064663',
-        padding: 20,
+        paddingVertical: 25,
+        marginTop: 30,
+        borderRadius: 20
     },
     textButton: {
         color: '#ECB365',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontSize: 20
     },
 })
 
