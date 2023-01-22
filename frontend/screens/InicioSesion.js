@@ -21,10 +21,10 @@ const InicioSesion = () => {
     
     const [User, setUsers] = useState({})
 
-    const loadUsers = async () => {     //HACEMOS LA PETICION DE LOS USUARIOS
+    //HACEMOS LA PETICION DE LOS USUARIOS
+    const loadUsers = async () => {     
         const Users = await getUsers()
         setUsers(Users)
-        //console.log(Users)
     }
 
     useEffect(() => {
@@ -47,7 +47,8 @@ const InicioSesion = () => {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: true
+                check_textInputChange: true,
+                isValidUser: true
             });
         }
         else
@@ -55,24 +56,12 @@ const InicioSesion = () => {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: false
+                check_textInputChange: false,
+                isValidUser: false
             })
         }
     }
 
-    const handleValidUser = (val) => {
-        if( val.trim().length == 8 ) {
-            setData({
-                ...data,
-                isValidUser: true
-            });
-        } else {
-            setData({
-                ...data,
-                isValidUser: false
-            });
-        }
-    }
 
     const handlePasswordChange = (val) => {
         if( val.trim().length !== 0 ) {
@@ -136,7 +125,6 @@ const InicioSesion = () => {
                     placeholder= 'DNI'
                     style = {styles.textInput}
                     onChangeText = {(val) => textInputChange(val)}
-                    onEndEditing={(x)=>handleValidUser(x.nativeEvent.text)}
                 />
                 {data.check_textInputChange ?
                         <Animatable.View style = {{alignSelf: 'center', marginRight: 10}}
@@ -148,7 +136,7 @@ const InicioSesion = () => {
                                 size={25}
                             />
                         </Animatable.View>
-                        : null}
+                : null}
             </View>
 
             <View style={styles.action}>

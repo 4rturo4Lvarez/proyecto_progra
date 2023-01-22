@@ -10,15 +10,6 @@ const Configuracion = () => {
 
     return (
         <Layout>
-            <TouchableOpacity style={styles.button}
-                //onPress={}
-            >
-                <Text 
-                    style={styles.textButton}
-                >
-                    Cambiar Contraseña
-                </Text>
-            </TouchableOpacity>
 
             <TouchableOpacity
                 style={styles.button}
@@ -38,9 +29,10 @@ const Configuracion = () => {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: '#064663',
-        paddingVertical: 25,
-        marginTop: 30,
-        borderRadius: 20
+        paddingVertical: 20,
+        paddingHorizontal: 40,
+        marginVertical: 35,
+        borderRadius: 20,
     },
     textButton: {
         color: '#ECB365',

@@ -1,30 +1,22 @@
-import { Text } from 'react-native';
+import React, { useEffect } from 'react';
 
-import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import PermissionsList from "../components/PermissionsList";
 
-import {getPermissions} from '../api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const Espacios = () => {
-
-    const [permissions, setPermissions] = useState([]);
-
-    const loadPermissions = async() => {
-        const DNI = await AsyncStorage.getItem('userToken')
-
-        const data = await getPermissions(DNI)
-    }
+const Espacios = ({route}) => {
 
     useEffect(() => {
-      loadPermissions()
-    }, [])
+        if (route.params?.permissions)
+        {
+            console.log(route.params);
+        }
+    }, [route.params?.permissions])
 
     return (
         <Layout>
-            <Text>HOLAAAA</Text>
+            <PermissionsList codes = {route.params?.permissions}/>
         </Layout>
-    )
-}
+    );
+};
 
 export default Espacios

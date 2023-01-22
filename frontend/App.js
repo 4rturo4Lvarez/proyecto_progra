@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {createStackNavigator} from "@react-navigation/stack"
+import { View } from "react-native";
+import { ActivityIndicator } from "@react-native-material/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import InicioSesion from "./screens/InicioSesion";
 import PantallaPrincipal from "./screens/PantallaPrincipal";
 import Configuracion from "./screens/Configuracion";
 import Espacios from "./screens/Espacios";
-import { View } from "react-native";
-import { ActivityIndicator } from "@react-native-material/core";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { AuthContext } from "./components/context";
 
 const Stack = createStackNavigator()
@@ -68,15 +66,15 @@ const App = () => {
         console.log(e);
 
       }
-      //console.log('user token: ', userToken);
       dispatch({ type: 'LOGIN', id: userName, token: userToken });
     },
 
     signOut: async() => {
 
+      const keys = [ "ipPlace", "userToken" ]
+
       try {
-        await AsyncStorage.removeItem('userToken');
-        await AsyncStorage.removeItem('userLogin');
+        await AsyncStorage.multiRemove(keys);
       }
       catch(e){
         console.log(e);
@@ -149,6 +147,7 @@ const App = () => {
                 headerStyle: { backgroundColor: '#ECB365'},
                 headerTitleStyle: { color: '#041C32'},
                 headerTitleAlign: 'center'
+                
               }}
             />
 
